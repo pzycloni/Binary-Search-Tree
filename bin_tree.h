@@ -48,7 +48,7 @@ template <class Tkey> SearchTree<Tkey>::isEmpty(){
 template <class Tkey> SearchTree<Tkey>::~SearchTree(){
 	if (root) delete root;
 }
-template <class Tkey> SearchTree<Tkey>::find(Tkey info){
+template <class Tkey> Tkey SearchTree<Tkey>::find(Tkey info){
 	SearchTree* n = root;
 	while (n){
 		int temp = (*cmp)(info, n->value);
@@ -56,4 +56,15 @@ template <class Tkey> SearchTree<Tkey>::find(Tkey info){
 		else if (temp > 0) n = n->right;
 		else return n->value;
 	}
+}
+
+template <class Tkey> Tkey SearchTree<Tkey>::finMin(){
+	TreeNode<Tkey> *n = _findMin(root);
+	return (n ? n->value : NULL);
+}
+
+template <class Tkey> TreeNode<Tkey> *SearchTree<Tkey>::_findMin(TreeNode<Tkey> *n){
+	if (n == NULL) return NULL;
+	while (n->left) n = n->left;
+	return n;
 }
