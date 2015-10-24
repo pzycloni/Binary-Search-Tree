@@ -7,37 +7,70 @@ template <class NODE> class Tree;
 template <class NODE>
 class Tree {
 	private:
-		TreeNode<NODE> *root;
 
 		inline TreeNode<NODE>* _getRoot(){ return root; }
+		int _height(TreeNode<NODE>*);
+		TreeNode<NODE> *root;
+		TreeNode<NODE>* _find(const NODE &, TreeNode<NODE>*);
 		TreeNode<NODE>* _findMax(TreeNode<NODE>*);
 		TreeNode<NODE>* _findMin(TreeNode<NODE>*);
-		TreeNode<NODE>* _find(const NODE &, TreeNode<NODE>*);
 		void _remove(const NODE &, TreeNode<NODE>*);
 		void _removeTree(TreeNode<NODE>*);
 
 	public:
 		Tree() : root(0){};
 		~Tree() { }
-		void insert(const NODE &);
-		int cmp(const NODE &, const NODE &);
-		void remove(const NODE &);
-		NODE find(const NODE &);
-		NODE findMin();
-		NODE findMax();
-		void removeMin();
-		void removeMax();
 		bool isEmpty();
+		int cmp(const NODE &, const NODE &);
+		int height();
+		NODE find(const NODE &);
+		NODE findMax();
+		NODE findMin();
+		void insert(const NODE &);
+		void remove(const NODE &);
+		void removeTree();
+		void removeMax();
+		void removeMin();
 };
 
 template <class NODE>
 int Tree<NODE>::cmp(const NODE &node, const NODE &key){
-	if (node > key)
-		return -1;
-	else if (node < key)
-		return 1;
+	if (node > key) return -1;
+	else if (node < key) return 1;
 	else return 0;
 }
+
+template <class NODE>
+void Tree<NODE>::removeTree(){
+	_removeTree(root);
+}
+
+void Tree<NODE>::_removeTree(TreeNode<NODE> *node){
+	if (node != NULL){
+		_removeTree(node->left);
+		_removeTree(node->right);
+		delete node;
+	}
+}
+
+template <class NODE>
+int Tree<NODE>::height(){
+	TreeNode<NODE> *node = root;
+	return _height(node);
+}
+
+template <class NODE>
+int Tree<NODE>::_height(TreeNode<NODE>* node){
+	if (!node) return 0;
+	int leftHeight = 0, rightHeight = 0;
+	if (node->left) leftHeight = _height(node->left);
+	else leftHeight = -1;
+	if (node->right) rightHeight = _height(node->right);
+	else rightHeight = -1;
+	int maxHeight = leftHeight > rightHeight ? leftHeight : rightHeight;
+	return (maxHeight + 1);
+}
+
 template <class NODE>
 bool Tree<NODE>::isEmpty(){
 	return !root;
@@ -95,16 +128,12 @@ void Tree<NODE>::insert(const NODE &val){
 		while (node) {
 			pointer = node;
 			result = cmp(node->value, val);
-			if (result < 0)
-				node = pointer->left;
-			else if (result > 0)
-				node = pointer->right;
+			if (result < 0) node = pointer->left;
+			else if (result > 0) node = pointer->right;
 			else return;
 		}
-		if (result < 0)
-			pointer->left = new TreeNode<NODE>(val);
-		else
-			pointer->right = new TreeNode<NODE>(val);
+		if (result < 0) pointer->left = new TreeNode<NODE>(val);
+		else pointer->right = new TreeNode<NODE>(val);
 	}
 }
 
@@ -115,13 +144,10 @@ void Tree<NODE>::remove(const NODE &val){
 
 template <class NODE>
 void Tree<NODE>::_remove(const NODE &val, TreeNode<NODE> *node){
-	if (node == NULL)
-		return;
+	if (node == NULL) return;
 	int result = cmp(node->value, val);
-	if (result < 0)
-		_remove(val, node->left);
-	else if (result > 0)
-		_remove(val, node->right);
+	if (result < 0) _remove(val, node->left);
+	else if (result > 0) _remove(val, node->right);
 	else {
 		if (node->left == NULL){
 			TreeNode<NODE> *old = node;
@@ -145,10 +171,8 @@ template <class NODE>
 TreeNode<NODE>* Tree<NODE>::_find(const NODE &val, TreeNode<NODE> *node){
 	if (node == NULL) return NULL;
 	int result = cmp(node->val, val);
-	if (result < 0)
-		node = node->left;
-	else if (result > 0)
-		node = node->right;
+	if (result < 0) node = node->left;
+	else if (result > 0) node = node->right;
 	else return node;
 }
 
