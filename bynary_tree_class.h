@@ -12,48 +12,76 @@ class Tree {
 		inline TreeNode<NODE>* _getRoot(){ return root; }
 		TreeNode<NODE>* _findMax(TreeNode<NODE>*);
 		TreeNode<NODE>* _findMin(TreeNode<NODE>*);
-		void _remove(const NODE&, TreeNode<NODE>*);
+		TreeNode<NODE>* _find(const NODE &, TreeNode<NODE>*);
+		void _remove(const NODE &, TreeNode<NODE>*);
+		void _removeTree(TreeNode<NODE>*);
 
 	public:
 		Tree() : root(0){};
-		~Tree() {
-			removeTree(root);
-		}
+		~Tree() { }
 		void insert(const NODE &);
-		/*TODO: доделать удаление дерева*/
-		void removeTree(TreeNode<NODE>*&); 
-		int cmp(const NODE &node, const NODE &key){
-			if (node > key)
-				return -1;
-			else if (node < key)
-				return 1;
-			else return 0;
-		}
+		int cmp(const NODE &, const NODE &);
 		void remove(const NODE &);
-		NODE findMin(){
-			TreeNode<NODE> *node = _findMin(root);
-			return (node ? node->value : NULL);
-		}
-		NODE findMax(){
-			TreeNode<NODE> *node = _findMax(root);
-			return (node ? node->value : NULL);
-		}
-		void removeMin(){
-			int found = findMin();
-			if (found)
-				cout << "min element " << found << " was delete!\n";
-			else
-				cout << "min element not found!\n";
-		}
-		void removeMax(){
-			int found = findMax();
-			if (found)
-				cout << "min element " << found << " was delete!\n";
-			else
-				cout << "min element not found!\n"
-		}
+		NODE find(const NODE &);
+		NODE findMin();
+		NODE findMax();
+		void removeMin();
+		void removeMax();
+		bool isEmpty();
 };
 
+template <class NODE>
+int Tree<NODE>::cmp(const NODE &node, const NODE &key){
+	if (node > key)
+		return -1;
+	else if (node < key)
+		return 1;
+	else return 0;
+}
+template <class NODE>
+bool Tree<NODE>::isEmpty(){
+	return !root;
+}
+
+template <class NODE>
+void Tree<NODE>::removeMin(){
+	TreeNode<NODE> *found = _findMin(root);
+	if (found) {
+		int element = found->value;
+		_remove(found->value, found);
+		printf("Min element ( %d ) was delete!\n", element);
+	}
+	else printf("Min element not found!\n");
+}
+
+template <class NODE>
+void Tree<NODE>::removeMax(){
+	TreeNode<NODE>* found = _findMax(root);
+	if (found){
+		int element = found->value;
+		_remove(found->value, value);
+		printf("Max element ( %d ) was delete!\n", element);
+	}
+	else printf("Max element not found!\n");
+}
+
+template <class NODE>
+NODE Tree<NODE>::find(const NODE &val){
+	TreeNode<NODE> *node = _find(val, root);
+	return (node ? node->value : NULL);
+}
+
+template <class NODE>
+NODE Tree<NODE>::findMin(){
+	TreeNode<NODE> *node = _findMin(root);
+	return (node ? node->value : NULL);
+}
+
+template <class NODE>
+NODE Tree<NODE>::findMax(){
+	TreeNode<NODE> *node = _findMax(root);
+	return (node ? node->value : NULL);
+}
 
 template <class NODE>
 void Tree<NODE>::insert(const NODE &val){
@@ -114,12 +142,14 @@ void Tree<NODE>::_remove(const NODE &val, TreeNode<NODE> *node){
 }
 
 template <class NODE>
-void Tree<NODE>::_removeTree(TreeNode<NODE> *&node){
-	if (node == NULL) return;
-	removeTree(node->left);
-	removeTree(node->right);
-	printf("Deleted node ( %d )", node->value);
-	delete node;
+TreeNode<NODE>* Tree<NODE>::_find(const NODE &val, TreeNode<NODE> *node){
+	if (node == NULL) return NULL;
+	int result = cmp(node->val, val);
+	if (result < 0)
+		node = node->left;
+	else if (result > 0)
+		node = node->right;
+	else return node;
 }
 
 template <class NODE>
