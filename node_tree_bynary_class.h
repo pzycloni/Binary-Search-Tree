@@ -11,7 +11,7 @@ template <class NODE> class TreeNode {
 		NODE value;
 
 	public:
-		TreeNode(const NODE &val) : left(0), right(0), value(val) {};
+		TreeNode(const NODE &val) : left(NULL), right(NULL), value(val) {};
 		NODE get_data();
 };
 

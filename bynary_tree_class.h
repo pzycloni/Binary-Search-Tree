@@ -16,10 +16,12 @@ class Tree {
 		TreeNode<NODE>* _findMin(TreeNode<NODE>*);
 		void _remove(const NODE &, TreeNode<NODE>*);
 		void _removeTree(TreeNode<NODE>*);
+		void preoder(TreeNode<NODE>*);
+		void postoder(TreeNode<NODE>*);
 
 	public:
 		Tree() : root(0){};
-		~Tree() { }
+		//~Tree() { }
 		bool isEmpty();
 		int cmp(const NODE &, const NODE &);
 		int height();
@@ -34,6 +36,22 @@ class Tree {
 };
 
 template <class NODE>
+void Tree<NODE>::preoder(TreeNode<NODE> *node){
+	if (!node) return;
+	if (node->value) printf("%d ", node->value);
+	preoder(node->left);
+	preoder(node->right);
+}
+
+template <class NODE>
+void Tree<NODE>::postoder(TreeNode<NODE> *node){
+	if (!node) return;
+	postoder(node->left);
+	postoder(node->right);
+	if (node->value) printf("%d ", node->value);
+}
+
+template <class NODE>
 int Tree<NODE>::cmp(const NODE &node, const NODE &key){
 	if (node > key) return -1;
 	else if (node < key) return 1;
@@ -45,6 +63,8 @@ void Tree<NODE>::removeTree(){
 	_removeTree(root);
 }
 
+
+template <class NODE>
 void Tree<NODE>::_removeTree(TreeNode<NODE> *node){
 	if (node != NULL){
 		_removeTree(node->left);
@@ -105,15 +125,40 @@ NODE Tree<NODE>::find(const NODE &val){
 }
 
 template <class NODE>
+TreeNode<NODE>* Tree<NODE>::_find(const NODE &val, TreeNode<NODE> *node){
+	if (node == NULL) return NULL;
+	int result = cmp(node->val, val);
+	if (result < 0) node = node->left;
+	else if (result > 0) node = node->right;
+	else return node;
+}
+
+template <class NODE>
 NODE Tree<NODE>::findMin(){
 	TreeNode<NODE> *node = _findMin(root);
 	return (node ? node->value : NULL);
 }
 
 template <class NODE>
+TreeNode<NODE>* Tree<NODE>::_findMin(TreeNode<NODE>* node){
+	while (node->left) {
+		node = node->left;
+	}
+	return node;
+}
+
+template <class NODE>
 NODE Tree<NODE>::findMax(){
 	TreeNode<NODE> *node = _findMax(root);
 	return (node ? node->value : NULL);
+}
+
+template <class NODE>
+TreeNode<NODE>* Tree<NODE>::_findMax(TreeNode<NODE>* node){
+	while (node->right) {
+		node = node->right;
+	}
+	return node;
 }
 
 template <class NODE>
@@ -128,11 +173,11 @@ void Tree<NODE>::insert(const NODE &val){
 		while (node) {
 			pointer = node;
 			result = cmp(node->value, val);
-			if (result < 0) node = pointer->left;
+			if (result <= 0) node = pointer->left;
 			else if (result > 0) node = pointer->right;
-			else return;
+			//else return;
 		}
-		if (result < 0) pointer->left = new TreeNode<NODE>(val);
+		if (result <= 0) pointer->left = new TreeNode<NODE>(val);
 		else pointer->right = new TreeNode<NODE>(val);
 	}
 }
@@ -165,33 +210,6 @@ void Tree<NODE>::_remove(const NODE &val, TreeNode<NODE> *node){
 			_remove(min->value, node->right);
 		}
 	}
-}
-
-template <class NODE>
-TreeNode<NODE>* Tree<NODE>::_find(const NODE &val, TreeNode<NODE> *node){
-	if (node == NULL) return NULL;
-	int result = cmp(node->val, val);
-	if (result < 0) node = node->left;
-	else if (result > 0) node = node->right;
-	else return node;
-}
-
-template <class NODE>
-TreeNode<NODE>* Tree<NODE>::_findMin(TreeNode<NODE>* node){
-	if (node == NULL) return NULL;
-	while (node->left) {
-		node = node->left;
-	}
-	return node;
-}
-
-template <class NODE>
-TreeNode<NODE>* Tree<NODE>::_findMax(TreeNode<NODE>* node){
-	if (node == NULL) return NULL;
-	while (node->right) {
-		node = node->right;
-	}
-	return node;
 }
 
 #endif;
